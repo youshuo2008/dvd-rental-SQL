@@ -1,0 +1,142 @@
+/* Query 1 - What are the 2 most popular family friendly movies (and their category) in terms of rental counts? */
+SELECT
+    f.title film_title,
+    c.name category_name,
+    COUNT(r.rental_id) rental_count
+FROM
+    category c
+    JOIN film_category fc ON c.category_id = fc.category_id
+    JOIN film f ON fc.film_id = f.film_id
+    JOIN inventory i ON f.film_id = i.film_id
+    JOIN rental r ON i.inventory_id = r.inventory_id
+WHERE
+    c.name IN ('Animation', 'Children', 'Classics', 'Comedy', 'Family', 'Music')
+GROUP BY
+    film_title,
+    category_name
+ORDER BY
+    rental_count DESC
+LIMIT 2;
+
+
+/* We define ¡®family friendly movies¡¯ as movies in the following category: Animation, Children, Classics, Comedy, Family, Music.
+This question is a modified version of the Question Set #1, Question 1.
+Reformatted the query according to the reviewer's suggestions. 
+Also, substituted the numbers in the GROUP BY and ORDER BY clause into column names as suggested.*/
+
+
+
+
+/* Query 2 - For family friendly movies, what are the top 2 most frequent rental durations?  */
+SELECT
+    t1.category_name,
+    t1.rental_duration,
+    COUNT(*)
+FROM
+    (SELECT
+         f.title film_title,
+         c.name category_name,
+         f.rental_duration,
+         NTILE(4) OVER (ORDER BY f.rental_duration) standard_quartile
+    FROM
+         category c
+         JOIN film_category fc ON c.category_id = fc.category_id
+         JOIN film f ON fc.film_id = f.film_id
+    WHERE
+         c.name IN ('Animation', 'Children', 'Classics', 'Comedy', 'Family', 'Music')
+    ) t1
+GROUP BY
+    t1.category_name,
+    t1.rental_duration
+ORDER BY
+    COUNT(*) DESC
+LIMIT 2;
+
+
+/* We define ¡®family friendly movies¡¯ as movies in the following category: Animation, Children, Classics, Comedy, Family, Music.
+This question is a modified version of the Question Set #1, Question 2.
+Reformatted the query according to the reviewer's suggestions.
+Also, substituted the numbers in the GROUP BY and ORDER BY clause into column names as suggested. */ 
+
+
+
+/* Query 3 - For Animation movies, what is the distribution of the movie length quartile (based on the quartiles of the rental duration for movies across all categories)?*/
+SELECT
+    t1.category_name,
+    t1.standard_quartile,
+    COUNT(*)
+FROM
+    (SELECT
+         f.title film_title,
+         c.name category_name,
+         f.rental_duration,
+         NTILE(4) OVER (ORDER BY f.rental_duration) standard_quartile
+      FROM
+         category c
+         JOIN film_category fc ON c.category_id = fc.category_id
+         JOIN film f ON fc.film_id = f.film_id
+      WHERE
+         c.name IN ('Animation', 'Children', 'Classics', 'Comedy', 'Family', 'Music')
+    ) t1
+GROUP BY
+    t1.category_name,
+    t1.standard_quartile
+ORDER BY
+    t1.category_name,
+    t1.standard_quartile
+LIMIT 4;
+
+
+/* We define ¡®family movies¡¯ as movies in the following category: Animation, Children, Classics, Comedy, Family, Music.
+This question is a modified version of the Question Set #1, Question 3.
+Reformatted the query according to the reviewer's suggestions.
+Also, substituted the numbers in the GROUP BY and ORDER BY clause into column names as suggested. */
+
+ 
+
+/* Query 4 -  What are the monthly total payment amount for dvd rental by the top 10 paying customers? */
+WITH t1 AS (SELECT
+                c.customer_id,
+                c.first_name || ' ' || c.last_name AS fullname,
+                SUM(p.amount) total_amount
+            FROM
+                customer c
+                JOIN payment p ON c.customer_id = p.customer_id
+            GROUP BY
+                c.customer_id,
+                fullname
+            ORDER BY
+                total_amount DESC
+            LIMIT 10)
+
+SELECT
+    EXTRACT(YEAR FROM t2.pay_mon) || '-' || EXTRACT(MONTH FROM t2.pay_mon) AS payment_month,
+    t2.fullname,
+    t2.pay_countpermon,
+    t2.pay_amount
+FROM
+    (SELECT
+        DATE_TRUNC('month', p.payment_date) AS pay_mon,
+        t1.fullname,
+        COUNT(*) AS pay_countpermon,
+        SUM(p.amount) pay_amount
+    FROM
+        payment p
+        JOIN t1 ON t1.customer_id = p.customer_id
+    WHERE
+        DATE_TRUNC('month', p.payment_date) BETWEEN '2007-01-01' AND '2017-12-01'
+    GROUP BY
+        pay_mon,
+        t1.fullname
+    ORDER BY
+        t1.fullname,
+        pay_mon
+    ) t2
+
+
+/* We define ¡®family movies¡¯ as movies in the following category: Animation, Children, Classics, Comedy, Family, Music.
+This is the Question Set #2, Question 2.
+Reformatted the query according to the reviewer's suggestions.
+Adjusted the query to extract only the year and the month and updated the graph presenation as suggested.
+Thank you. */
+
