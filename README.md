@@ -13,7 +13,7 @@ A PDF visual presentation was generated using the SQL queries results. The four 
 4. What are the monthly total payment amount for DVD rental by the top 10 paying customers? <br />     
 
 ### Files used
-The Sakila DVD Rental relational database was hosted on Udacity's server. <br />  
+The Sakila DVD Rental relational database was hosted on Udacity's server. <br />
 The ERD diagram can be found at [here](https://s3.amazonaws.com/video.udacity-data.com/topher/2018/September/5ba96b12_dvd-rental-erd-2/dvd-rental-erd-2.pdf).
 
 ### Credits
