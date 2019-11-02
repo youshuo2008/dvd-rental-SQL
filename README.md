@@ -9,7 +9,7 @@ This project focuses on constructing SQL queries using JOINs, aggregations, subq
 1. What are the two most popular family friendly movies in terms of rental counts? <br />
 2. For family friendly movies, what are the top two most frequent rental durations? <br />
 3. For animation movies, what is the distribution of the movie length quartile? <br />
-4. What are the monthly total payment amount for DVD rental by the top 10 paying customers? <br />     
+4. What are the monthly total payment amount for DVD rental by the top 10 paying customers? <br />
 A PDF visual presentation was generated using the SQL queries results.
 
 ### Files used
